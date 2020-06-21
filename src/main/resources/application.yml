@@ -1,0 +1,26 @@
+server:
+  port: 80
+spring:
+  profiles.active: dev
+  application:
+    name: teletronics
+  jackson.serialization.write-dates-as-timestamps: false
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+logging:
+  files:
+    path: "logs/${spring.application.name}"
+    level: WARN
+    max-size: 2MB
+    max-history: 2
+    total-size-cap: 10MB
+  console:
+    level: INFO
+config:
+  project-name: OWP
+  source: ${spring.application.name}

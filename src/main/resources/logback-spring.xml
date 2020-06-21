@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include
+            resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <springProperty scope="context" name="LOG_FILE"
+                    source="logging.files.path" defaultValue="logs/teletronics-test-ms"/>
+    <springProperty scope="context" name="LOG_CONSOLE_LEVEL"
+                    source="logging.console.level" defaultValue="INFO"/>
+    <springProperty scope="context" name="LOG_FILE_LEVEL"
+                    source="logging.files.level" defaultValue="WARN"/>
+    <springProperty scope="context" name="LOG_FILE_MAX_SIZE"
+                    source="logging.files.max-size" defaultValue="4MB"/>
+    <springProperty scope="context"
+                    name="LOG_FILE_MAX_HISTORY" source="logging.files.max-history"
+                    defaultValue="2"/>
+    <springProperty scope="context"
+                    name="LOG_TOTAL_SIZE_CAP" source="logging.files.total-size-cap"
+                    defaultValue="10MB"/>
+
+    <appender name="consoleAppender"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+    <appender name="consoleJsonAppender"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${LOG_CONSOLE_LEVEL}</level>
+        </filter>
+        <encoder
+                class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+                <timestampFormat>dd-MM-yyyy'T'HH:mm:ss.SSSX</timestampFormat>
+                <timestampFormatTimezoneId>Etc/UTC</timestampFormatTimezoneId>
+                <jsonFormatter
+                        class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+                    <prettyPrint>true</prettyPrint>
+                </jsonFormatter>
+            </layout>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+    <appender name="fileAppender"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}.json</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${LOG_FILE_LEVEL}</level>
+        </filter>
+        <append>false</append>
+        <encoder
+                class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+                <timestampFormat>dd-MM-yyyy'T'HH:mm:ss.SSSX</timestampFormat>
+                <timestampFormatTimezoneId>Etc/UTC</timestampFormatTimezoneId>
+                <jsonFormatter
+                        class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+                    <prettyPrint>true</prettyPrint>
+                </jsonFormatter>
+            </layout>
+        </encoder>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- daily rollover inferred from the file name -->
+            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.json
+            </fileNamePattern>
+            <maxFileSize>${LOG_FILE_MAX_SIZE}</maxFileSize>
+            <maxHistory>${LOG_FILE_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${LOG_TOTAL_SIZE_CAP}</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+
+    <springProfile name="!dev">
+        <root name="logger">
+            <appender-ref ref="consoleJsonAppender"/>
+            <appender-ref ref="fileAppender"/>
+        </root>
+    </springProfile>
+    <springProfile name="dev">
+        <root name="logger" level="INFO">
+            <appender-ref ref="consoleAppender"/>
+        </root>
+    </springProfile>
+</configuration>

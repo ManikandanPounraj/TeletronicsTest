@@ -1,0 +1,31 @@
+server:
+  port: 80
+spring:
+  application:
+    name: teletronics-test-ms
+  jackson.serialization.write-dates-as-timestamps: false
+  data:
+    mongodb:
+      uri: mongodb://test:test123@localhost:27017/teletronics
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+logging:
+  files:
+    path: "logs/${spring.application.name}"
+    level: WARN
+  console:
+    level: INFO
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.ws.client.MessageTracing.sent: DEBUG
+    org.springframework.ws.server.MessageTracing.sent: DEBUG
+    org.springframework.ws.client.MessageTracing.received: TRACE
+    org.springframework.ws.server.MessageTracing.received: TRACE
+config:
+  project-name: teletronics-test-ms
+  source: ${spring.application.name}
